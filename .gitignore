@@ -1,0 +1,7 @@
+node_modules
+.idea
+public/libs
+bin
+npm-debug.log
+*.p12
+*.pem
