@@ -1,142 +1,241 @@
-<input id="start-time" name="start-time" type="date">
-<input id="end-time" name="end-time" type="date">
-<button id="get-button">Get</button>
-<hr>
-<div id='chart'></div>
-<!--<div id='loadchart'></div>-->
-<script>
-    var chart, chartData;
+<div class="mdl-grid demo-content">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Users & Pageviews</h2>
+        </div>
+        <!--<div class="mdl-card__supporting-text">-->
+        <!--Lorem ipsum dolor sit amet, consectetur adipiscing elit.-->
+        <!--Mauris sagittis pellentesque lacus eleifend lacinia...-->
+        <!--</div>-->
+        <div id='chart'>
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button id="last-week"
+                    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                Last Week
+            </button>
+            <button id="last-month"
+                    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                Last Month
+            </button>
+            <button id="last-year"
+                    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+                Last Year
+            </button>
+            <!--<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">-->
+            <!--Get Started-->
+            <!--</a>-->
+            <input id="start-time" name="start-time" type="date">
+            <input id="end-time" name="end-time" type="date">
+            <!-- Accent-colored raised button with ripple -->
+            <button id="get-button"
+                    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                Get
+            </button>
+            <!--<hr>-->
+            <!-- MDL Spinner Component -->
+        </div>
+        <div class="mdl-card__menu">
+            <!--<button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">-->
+            <!--<i class="material-icons">share</i>-->
+            <!--</button>-->
+            <!-- Right aligned menu below button -->
+            <button id="demo-menu-lower-right"
+                    class="mdl-button mdl-js-button mdl-button--icon">
+                <i class="material-icons">more_vert</i>
+            </button>
 
-    document.getElementById('get-button').addEventListener('click', function() {
-        d3.json('/traffic/' + document.getElementById('start-time').value + '/' + document.getElementById('end-time').value,
-                function(error, data) {
-                    if(error) {
-                        return console.warn(error);
-                    }
-                    chart.load({
-                        rows: chartData.concat(data.rows)
-                    })
+            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                for="demo-menu-lower-right">
+                <li class="mdl-menu__item">Some Action</li>
+                <li class="mdl-menu__item">Another Action</li>
+                <li disabled class="mdl-menu__item">Disabled Action</li>
+                <li class="mdl-menu__item">Yet Another Action</li>
+            </ul>
+        </div>
+    </div>
+    <!--<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">-->
+    <!--</div>-->
+    <script>
+        var chart, chartData;
+
+        function replaceChartDataWithResponse(startDate, endDate) {
+            d3.json('/traffic/' + startDate + '/' + endDate, function(error, data) {
+                if(error) {
+                    return console.warn(error);
+                }
+                chartData = data.rows;
+                var headers = data.columnHeaders.map(function(val) {
+                    return val.name;
+                });
+                data.rows.unshift(headers.slice());
+                chart.load({
+                    rows: chartData
                 })
-    });
-
-    d3.json('/traffic/2015-09-01/2015-09-30', function(error, data) {
-        if(error) {
-            return console.warn(error);
+            })
         }
 
-        chartData = data.rows;
-        //        data.rows.unshift(["date", "users", "pageviews"]);
-        var headers = data.columnHeaders.map(function(val) {
-            return val.name;//.split(":").join("_");
+        function getLastWeekData() {
+            console.log("getLastWeekData");
+            var startDate = moment().subtract(1, "week").format("YYYY-MM-DD");
+            var endDate = moment().format("YYYY-MM-DD");
+            replaceChartDataWithResponse(startDate, endDate);
+        }
+
+        function getLastMonthData() {
+            var startDate = moment().subtract(1, "month").format("YYYY-MM-DD");
+            var endDate = moment().format("YYYY-MM-DD");
+            replaceChartDataWithResponse(startDate, endDate);
+        }
+
+        function getLastYearData() {
+            var startDate = moment().subtract(1, "year").format("YYYY-MM-DD");
+            var endDate = moment().format("YYYY-MM-DD");
+            replaceChartDataWithResponse(startDate, endDate);
+        }
+
+        d3.select('#last-week').on("click", getLastWeekData);
+        d3.select('#last-month').on("click", getLastMonthData);
+        d3.select('#last-year').on("click", getLastYearData);
+
+        document.getElementById('get-button').addEventListener('click', function() {
+            d3.json('/traffic/' + document.getElementById('start-time').value + '/' + document.getElementById('end-time').value,
+                    function(error, data) {
+                        if(error) {
+                            return console.warn(error);
+                        }
+                        chart.load({
+                            rows: chartData.concat(data.rows)
+                        })
+                    })
         });
-        //        console.log(headers.slice());
-        data.rows.unshift(headers.slice());
-        var xAxis = headers.shift();
-        //        console.log(xAxis, headers);
-        var template = {
-            bindto: '#chart',
-            data: {
-                rows: data.rows,
-                x: xAxis,
-                xFormat: '%Y%m%d',
-                types: {
-                    "ga:pageviews": 'area',
-                    "ga:users": 'area'
-                },
-                keys: {
-                    value: headers
-                },
-                //                groups: [
-                //                    [
-                //                        'users',
-                //                        'pageviews'
-                //                    ]
-                //                ],
-                axes: {
-                    "ga:users": 'y',
-                    "ga:pageviews": 'y2'
-                }
-            },
-            axis: {
-                x: {
-                    label: {
-                        text: 'Date',
-                        position: 'outer-center'
-                    },
-                    type: 'timeseries',
-                    tick: {
-                        format: "%d-%m-%Y"
-                    }
-                },
-                y: {
-                    label: {
-                        text: 'Users',
-                        position: 'outer-middle'
-                    }
-                },
-                y2: {
-                    label: {
-                        text: 'Page views',
-                        position: 'outer-middle'
-                    },
-                    show: true
-                }
-            },
-            grid: {
-                //                x: {
-                //                    show: true
-                //                },
-                y: {
-                    show: true
-                }
+
+        d3.select('#chart').classed('loading', true);
+
+        var startDate = moment().subtract(1, "month").format("YYYY-MM-DD");
+        var endDate = moment().format("YYYY-MM-DD");
+        d3.json('/traffic/' + startDate + '/' + endDate, function(error, data) {
+            if(error) {
+                return console.warn(error);
             }
-        };
 
-        chart = c3.generate(template);
+            d3.select('#chart').classed('loading', false);
 
-        //        setTimeout(function() {
-        //            d3.json('/traffic/2015-04-01/2015-06-01', function(error, data) {
-        //                if(error) {
-        //                    return console.warn(error);
+            chartData = data.rows;
+            //        data.rows.unshift(["date", "users", "pageviews"]);
+            var headers = data.columnHeaders.map(function(val) {
+                return val.name;//.split(":").join("_");
+            });
+            //        console.log(headers.slice());
+            data.rows.unshift(headers.slice());
+            var xAxis = headers.shift();
+            //        console.log(xAxis, headers);
+            var template = {
+                bindto: '#chart',
+                data: {
+                    rows: data.rows,
+                    x: xAxis,
+                    xFormat: '%Y%m%d',
+                    types: {
+                        "ga:pageviews": 'area',
+                        "ga:users": 'area'
+                    },
+                    keys: {
+                        value: headers
+                    },
+                    //                groups: [
+                    //                    [
+                    //                        'users',
+                    //                        'pageviews'
+                    //                    ]
+                    //                ],
+                    axes: {
+                        "ga:users": 'y',
+                        "ga:pageviews": 'y2'
+                    }
+                },
+                axis: {
+                    x: {
+                        label: {
+                            text: 'Date',
+                            position: 'outer-center'
+                        },
+                        type: 'timeseries',
+                        tick: {
+                            format: "%d-%m-%Y"
+                        }
+                    },
+                    y: {
+                        label: {
+                            text: 'Users',
+                            position: 'outer-middle'
+                        }
+                    },
+                    y2: {
+                        label: {
+                            text: 'Page views',
+                            position: 'outer-middle'
+                        },
+                        show: true
+                    }
+                },
+                grid: {
+                    //                x: {
+                    //                    show: true
+                    //                },
+                    y: {
+                        show: true
+                    }
+                }
+            };
+
+            chart = c3.generate(template);
+
+            //        setTimeout(function() {
+            //            d3.json('/traffic/2015-04-01/2015-06-01', function(error, data) {
+            //                if(error) {
+            //                    return console.warn(error);
+            //                }
+            //                chart.load({
+            //                    rows: chartData.concat(data.rows)
+            //                })
+            //            })
+            //        }, 1000);
+        });
+
+        //    d3.json('/load/2015-01-01/2015-03-01', function(error, data) {
+        //        if(error) {
+        //            return console.warn(error);
+        //        }
+        //
+        //        data.rows.unshift(["date", "pageLoadTime", "pageDownloadTime", "domContentLoadedTime"]);
+        //        var template = {
+        //            bindto: '#loadchart',
+        //            data: {
+        //                rows: data.rows,
+        //                x: 'date',
+        //                xFormat: '%Y%m%d',
+        //                type: 'area',
+        //                groups: [
+        //                    [
+        //                        'pageLoadTime',
+        //                        'pageDownloadTime',
+        //                        'domContentLoadedTime'
+        //                    ]
+        //                ]
+        //            },
+        //            axis: {
+        //                x: {
+        //                    type: 'timeseries',
+        //                    tick: {
+        //                        format: "%d-%m-%Y"
+        //                    }
         //                }
-        //                chart.load({
-        //                    rows: chartData.concat(data.rows)
-        //                })
-        //            })
-        //        }, 1000);
-    });
-
-    //    d3.json('/load/2015-01-01/2015-03-01', function(error, data) {
-    //        if(error) {
-    //            return console.warn(error);
-    //        }
-    //
-    //        data.rows.unshift(["date", "pageLoadTime", "pageDownloadTime", "domContentLoadedTime"]);
-    //        var template = {
-    //            bindto: '#loadchart',
-    //            data: {
-    //                rows: data.rows,
-    //                x: 'date',
-    //                xFormat: '%Y%m%d',
-    //                type: 'area',
-    //                groups: [
-    //                    [
-    //                        'pageLoadTime',
-    //                        'pageDownloadTime',
-    //                        'domContentLoadedTime'
-    //                    ]
-    //                ]
-    //            },
-    //            axis: {
-    //                x: {
-    //                    type: 'timeseries',
-    //                    tick: {
-    //                        format: "%d-%m-%Y"
-    //                    }
-    //                }
-    //            }
-    //        };
-    //
-    //        var chart = c3.generate(template);
-    //    });
-</script>
+        //            }
+        //        };
+        //
+        //        var chart = c3.generate(template);
+        //    });
+    </script>
+</div>
