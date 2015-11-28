@@ -24,7 +24,7 @@ router.get('/', function(req, res, next) {
     });
 });
 
-router.get('/api/:start/:end', function(req, res, next) {
+router.get('/api/browsers/:start/:end', function(req, res, next) {
     authClient.authorize(function(err, tokens) {
         if(err) {
             console.log(err);
@@ -36,8 +36,29 @@ router.get('/api/:start/:end', function(req, res, next) {
             'ids': 'ga:4109305',
             'start-date': req.params.start,
             'end-date': req.params.end,
-            'metrics': ['ga:users,ga:pageviews'],
-            'dimensions': 'ga:date'
+            'metrics': ['ga:sessions'],
+            'dimensions': 'ga:browser'
+        }, function(err, result) {
+            //console.log(err, result);
+            res.send(result);
+        });
+    });
+});
+
+router.get('/api/devices/:start/:end', function(req, res, next) {
+    authClient.authorize(function(err, tokens) {
+        if(err) {
+            console.log(err);
+            res.send(err);
+            return;
+        }
+        analytics.data.ga.get({
+            auth: authClient,
+            'ids': 'ga:4109305',
+            'start-date': req.params.start,
+            'end-date': req.params.end,
+            'metrics': ['ga:sessions'],
+            'dimensions': 'ga:deviceCategory'
         }, function(err, result) {
             //console.log(err, result);
             res.send(result);

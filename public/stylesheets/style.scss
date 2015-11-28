@@ -7,7 +7,7 @@ a {
     color: #00B7FF;
 }
 
-#chart {
+.chart {
     height: 320px;
     width: 100%;
     text-align: center;
@@ -294,4 +294,10 @@ html, body {
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center;
+}
+
+.mdl-card__title {
+    .material-icons {
+        margin-right: 1ex;
+    }
 }
