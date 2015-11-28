@@ -1,0 +1,25 @@
+{
+  "name": "DashyTheBoard",
+  "description": "",
+  "main": "app.js",
+  "authors": [
+    "James Ford <james.f@mmtdigital.co.uk>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/psyked/DashyTheBoard",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.5.9",
+    "c3": "~0.4.10",
+    "moment": "momentjs#~2.10.6"
+  }
+}
