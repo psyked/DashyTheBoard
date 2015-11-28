@@ -61,7 +61,7 @@
         var chart, chartData;
 
         function replaceChartDataWithResponse(startDate, endDate) {
-            d3.json('/traffic/' + startDate + '/' + endDate, function(error, data) {
+            d3.json('/browser/api/' + startDate + '/' + endDate, function(error, data) {
                 if(error) {
                     return console.warn(error);
                 }
@@ -100,7 +100,7 @@
         d3.select('#last-year').on("click", getLastYearData);
 
         document.getElementById('get-button').addEventListener('click', function() {
-            d3.json('/traffic/' + document.getElementById('start-time').value + '/' + document.getElementById('end-time').value,
+            d3.json('/browser/api/' + document.getElementById('start-time').value + '/' + document.getElementById('end-time').value,
                     function(error, data) {
                         if(error) {
                             return console.warn(error);
@@ -115,7 +115,7 @@
 
         var startDate = moment().subtract(1, "month").format("YYYY-MM-DD");
         var endDate = moment().format("YYYY-MM-DD");
-        d3.json('/traffic/' + startDate + '/' + endDate, function(error, data) {
+        d3.json('/browser/api/' + startDate + '/' + endDate, function(error, data) {
             if(error) {
                 return console.warn(error);
             }
@@ -193,7 +193,7 @@
             chart = c3.generate(template);
 
             //        setTimeout(function() {
-            //            d3.json('/traffic/2015-04-01/2015-06-01', function(error, data) {
+            //            d3.json('/browser/api/2015-04-01/2015-06-01', function(error, data) {
             //                if(error) {
             //                    return console.warn(error);
             //                }

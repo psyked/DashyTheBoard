@@ -19,9 +19,16 @@ var authClient = new JWT(
 );
 
 router.get('/', function(req, res, next) {
+    res.render('browser', {
+        title: 'Browser Stats'
+    });
+});
+
+router.get('/api/:start/:end', function(req, res, next) {
     authClient.authorize(function(err, tokens) {
         if(err) {
             console.log(err);
+            res.send(err);
             return;
         }
         analytics.data.ga.get({
@@ -32,7 +39,8 @@ router.get('/', function(req, res, next) {
             'metrics': ['ga:users,ga:pageviews'],
             'dimensions': 'ga:date'
         }, function(err, result) {
-            res.send('index', result);
+            //console.log(err, result);
+            res.send(result);
         });
     });
 });
