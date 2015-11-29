@@ -152,12 +152,34 @@
                 data: {
                     columns: modifiedResult,
                     type: 'donut',
-                    order: null
+                    order: null,
+                    color: function(color, d) {
+                        //                        console.log(d.id, d);
+                        //                        console.log(String(d.id).indexOf("iOS") !== -1);
+                        if(String(d).indexOf("iOS") !== -1) {
+                            if(String(d).indexOf("iOS 8") !== -1 || String(d).indexOf("iOS 9") !== -1) {
+                                return "#00BCD4";
+                            } else {
+                                return "#9E9E9E";
+                            }
+                        } else if(String(d).indexOf("Windows") !== -1) {
+                            if(String(d).indexOf("XP") !== -1 || String(d).indexOf("Vista") !== -1 || String(d).indexOf("Phone") !== -1) {
+                                //                                return "#00BCD4";
+                                return "#9E9E9E";
+                            } else {
+                                return "#8BC34A";
+                            }
+                        } else if(String(d).indexOf("Macintosh") !== -1) {
+                            return "#FFC107";
+                        } else {
+                            return '#BDBDBD';//d.id && d.id === 'data3' ? d3.rgb(color).darker(d.value / 150) : color;
+                        }
+                    }
                 },
                 legend: {
                     position: 'right',
                     show: false
-                }
+                },
             };
 
             var chart = c3.generate(template);
