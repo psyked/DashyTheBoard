@@ -1,0 +1,101 @@
+<div class="mdl-grid demo-content">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text"><i class="material-icons" role="presentation">laptop_mac</i>Screen Sizes
+            </h2>
+        </div>
+        <div id='chart' class="chart">
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+        </div>
+        <div class="mdl-card__menu">
+            <button id="demo-menu-lower-right"
+                    class="mdl-button mdl-js-button mdl-button--icon chart-csv">
+                <i class="material-icons">file_download</i>
+            </button>
+        </div>
+    </div>
+    <script>
+        d3.select('#chart').classed('loading', true);
+        var startDate = moment().subtract(1, "month").format("YYYY-MM-DD");
+        var endDate = moment().format("YYYY-MM-DD");
+        d3.select('.chart-csv').on('click', function() {
+            window.open('/design/csv/screen/' + startDate + '/' + endDate);
+        });
+        d3.json('/design/api/screen/' + startDate + '/' + endDate, function(error, data) {
+            if(error) {
+                return console.warn(error);
+            }
+
+            d3.select('#chart').classed('loading', false);
+
+//            var headers = data.columnHeaders.map(function(val) {
+//                return val.name;
+//            });
+//            data.rows.unshift(headers.slice());
+
+            var transformedDataHeaders = ['width', 'height', 'sessions'];
+            var transformedData = [];
+//            console.log(data.rows[0]);
+            for(var i = 0, l = data.rows.length; i < l; i++) {
+                var sessions = data.rows[i][2];
+                var deviceString = data.rows[i][0].split('x');
+                var width = deviceString[0];
+                var height = deviceString[1];
+                transformedData.push([width, height, sessions]);
+            }
+
+            console.log(transformedData);
+
+            //            var xAxis = headers.pop();
+            var template = {
+                bindto: '#chart',
+                data: {
+                    columns: transformedData,
+                    //                    x:function(){
+                    //                        console.log(arguments);
+                    //                        return 'ga:sessions'
+                    //                    },
+                    //                    x: 'ga:sessions',
+                    //                    xFormat: '%Y%m%d',
+                    keys: {
+                        value: transformedDataHeaders
+                    },
+                    type: 'scatter',
+                    //                    color: function(color, d) {
+                    //                                                console.log(d.id, d);
+                    //                        //                        console.log(String(d.id).indexOf("iOS") !== -1);
+                    //                        if(String(d).indexOf("iOS") !== -1) {
+                    //                            if(String(d).indexOf("iOS 8") !== -1 || String(d).indexOf("iOS 9") !== -1) {
+                    //                                return "#00BCD4";
+                    //                            } else {
+                    //                                return "#9E9E9E";
+                    //                            }
+                    //                        } else if(String(d).indexOf("Windows") !== -1) {
+                    //                            if(String(d).indexOf("XP") !== -1 || String(d).indexOf("Vista") !== -1 || String(d).indexOf("Phone") !== -1) {
+                    //                                //                                return "#00BCD4";
+                    //                                return "#9E9E9E";
+                    //                            } else {
+                    //                                return "#8BC34A";
+                    //                            }
+                    //                        } else if(String(d).indexOf("Macintosh") !== -1) {
+                    //                            return "#FFC107";
+                    //                        } else {
+                    //                            return '#BDBDBD';//d.id && d.id === 'data3' ? d3.rgb(color).darker(d.value / 150) : color;
+                    //                        }
+                    //                    }//,
+                    //                    order: null
+                },
+                legend: {
+                    position: 'right'
+                },
+                point: {
+                    r: function(d) {
+                        return d.value * 5;
+                    }
+                },
+            };
+
+            var chart = c3.generate(template);
+        });
+    </script>
+</div>

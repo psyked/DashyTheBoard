@@ -9,5 +9,4 @@
 - Top content lists (by URL)
 - Inbound traffic stuff
 - Maps and traffic
-- CSV conversion for data
 - Icons in charts?
