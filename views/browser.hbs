@@ -7,6 +7,12 @@
         <div id='chart' class="chart">
             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
         </div>
+        <div class="mdl-card__menu">
+            <button id="demo-menu-lower-right"
+                    class="mdl-button mdl-js-button mdl-button--icon chart-csv">
+                <i class="material-icons">file_download</i>
+            </button>
+        </div>
     </div>
     <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-grid">
         <div class="mdl-card__title">
@@ -14,6 +20,12 @@
         </div>
         <div id='devices-chart' class="chart">
             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+        </div>
+        <div class="mdl-card__menu">
+            <button id="demo-menu-lower-right"
+                    class="mdl-button mdl-js-button mdl-button--icon devices-csv">
+                <i class="material-icons">file_download</i>
+            </button>
         </div>
     </div>
     <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-grid">
@@ -24,6 +36,12 @@
         <div id='browser-os-chart' class="chart">
             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
         </div>
+        <div class="mdl-card__menu">
+            <button id="demo-menu-lower-right"
+                    class="mdl-button mdl-js-button mdl-button--icon browser-os-csv">
+                <i class="material-icons">file_download</i>
+            </button>
+        </div>
     </div>
     <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-grid">
         <div class="mdl-card__title">
@@ -33,11 +51,20 @@
         <div id='browser-device-chart' class="chart">
             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
         </div>
+        <div class="mdl-card__menu">
+            <button id="demo-menu-lower-right"
+                    class="mdl-button mdl-js-button mdl-button--icon browser-device-csv">
+                <i class="material-icons">file_download</i>
+            </button>
+        </div>
     </div>
     <script>
         d3.select('#chart').classed('loading', true);
         var startDate = moment().subtract(1, "month").format("YYYY-MM-DD");
         var endDate = moment().format("YYYY-MM-DD");
+        d3.select('.chart-csv').on('click', function() {
+            window.open('/browser/csv/browsers/' + startDate + '/' + endDate);
+        });
         d3.json('/browser/api/browsers/' + startDate + '/' + endDate, function(error, data) {
             if(error) {
                 return console.warn(error);
@@ -63,6 +90,9 @@
         d3.select('#devices-chart').classed('loading', true);
         var startDate = moment().subtract(1, "month").format("YYYY-MM-DD");
         var endDate = moment().format("YYYY-MM-DD");
+        d3.select('.devices-csv').on('click', function() {
+            window.open('/browser/csv/devices/' + startDate + '/' + endDate);
+        });
         d3.json('/browser/api/devices/' + startDate + '/' + endDate, function(error, data) {
             if(error) {
                 return console.warn(error);
@@ -98,6 +128,9 @@
         d3.select('#browser-device-chart').classed('loading', true);
         var startDate = moment().subtract(1, "month").format("YYYY-MM-DD");
         var endDate = moment().format("YYYY-MM-DD");
+        d3.select('.browser-device-csv').on('click', function() {
+            window.open('/browser/csv/browser-devices/' + startDate + '/' + endDate);
+        });
         d3.json('/browser/api/browser-devices/' + startDate + '/' + endDate, function(error, data) {
             if(error) {
                 return console.warn(error);
@@ -132,6 +165,9 @@
         d3.select('#browser-os-chart').classed('loading', true);
         var startDate = moment().subtract(1, "month").format("YYYY-MM-DD");
         var endDate = moment().format("YYYY-MM-DD");
+        d3.select('.browser-os-csv').on('click', function() {
+            window.open('/browser/csv/os-details/' + startDate + '/' + endDate);
+        });
         d3.json('/browser/api/os-details/' + startDate + '/' + endDate, function(error, data) {
             if(error) {
                 return console.warn(error);
