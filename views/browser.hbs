@@ -1,5 +1,5 @@
 <div class="mdl-grid demo-content">
-    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-grid">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-grid">
         <div class="mdl-card__title">
             <h2 class="mdl-card__title-text"><i class="material-icons" role="presentation">computer</i>Browser Versions
             </h2>
@@ -8,7 +8,7 @@
             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
         </div>
     </div>
-    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-grid">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-grid">
         <div class="mdl-card__title">
             <h2 class="mdl-card__title-text"><i class="material-icons" role="presentation">devices</i>Device types</h2>
         </div>
@@ -16,10 +16,19 @@
             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
         </div>
     </div>
-    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-grid">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-grid">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text"><i class="material-icons" role="presentation">devices</i>Operating System
+            </h2>
+        </div>
+        <div id='browser-os-chart' class="chart">
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+        </div>
+    </div>
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--3-col mdl-grid">
         <div class="mdl-card__title">
             <h2 class="mdl-card__title-text"><i class="material-icons" role="presentation">devices</i>Browser & Device
-                types</h2>
+            </h2>
         </div>
         <div id='browser-device-chart' class="chart">
             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
@@ -106,6 +115,40 @@
 
             var template = {
                 bindto: '#browser-device-chart',
+                data: {
+                    columns: modifiedResult,
+                    type: 'donut',
+                    order: null
+                },
+                legend: {
+                    position: 'right',
+                    show: false
+                }
+            };
+
+            var chart = c3.generate(template);
+        });
+
+        d3.select('#browser-os-chart').classed('loading', true);
+        var startDate = moment().subtract(1, "month").format("YYYY-MM-DD");
+        var endDate = moment().format("YYYY-MM-DD");
+        d3.json('/browser/api/os-details/' + startDate + '/' + endDate, function(error, data) {
+            if(error) {
+                return console.warn(error);
+            }
+
+            d3.select('#browser-os-chart').classed('loading', false);
+
+            var modifiedResult = data.rows,
+                    loopData;
+            for(var i = 0, l = modifiedResult.length; i < l; i++) {
+                loopData = modifiedResult[i];
+                loopData[0] = loopData[0] + " " + loopData[1];
+                loopData.splice(1, 1);
+            }
+
+            var template = {
+                bindto: '#browser-os-chart',
                 data: {
                     columns: modifiedResult,
                     type: 'donut',
