@@ -31,7 +31,7 @@ app.use(require('node-sass-middleware')({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/traffic/:start/:end', traffic);
+app.use('/traffic', traffic);
 app.use('/load/:start/:end', load);
 app.use('/browser', browser);
 

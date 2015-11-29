@@ -18,7 +18,7 @@ var authClient = new JWT(
     ['https://www.googleapis.com/auth/analytics.readonly']
 );
 
-router.get('/', function(req, res, next) {
+router.get('/:start/:end', function(req, res, next) {
     authClient.authorize(function(err, tokens) {
         if(err) {
             console.log(err);
@@ -33,6 +33,30 @@ router.get('/', function(req, res, next) {
             'dimensions': 'ga:date'
         }, function(err, result) {
             res.send('index', result);
+        });
+    });
+});
+
+router.get('/csv/:start/:end', function(req, res, next) {
+    authClient.authorize(function(err, tokens) {
+        if(err) {
+            console.log(err);
+            res.send(err);
+            return;
+        }
+        analytics.data.ga.get({
+            auth: authClient,
+            'ids': 'ga:4109305',
+            'start-date': req.params.start,
+            'end-date': req.params.end,
+            'metrics': ['ga:users,ga:pageviews'],
+            'dimensions': 'ga:date'
+        }, function(err, result) {
+            var data = result.rows;
+            data.unshift(result.columnHeaders.map(function(obj) {
+                return obj.name;
+            }));
+            res.csv(data);
         });
     });
 });
