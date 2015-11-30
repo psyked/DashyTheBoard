@@ -28,69 +28,106 @@
 
             d3.select('#chart').classed('loading', false);
 
-//            var headers = data.columnHeaders.map(function(val) {
-//                return val.name;
-//            });
-//            data.rows.unshift(headers.slice());
+            //            var headers = data.columnHeaders.map(function(val) {
+            //                return val.name;
+            //            });
+            //            data.rows.unshift(headers.slice());
 
-            var transformedDataHeaders = ['width', 'height', 'sessions'];
-            var transformedData = [];
-//            console.log(data.rows[0]);
+            var transformedDataHeaders = ['width', 'height'];
+            var transformedData = [transformedDataHeaders];
+            var stats = [['category', 'sessions']];
+            //            console.log(data.rows[0]);
             for(var i = 0, l = data.rows.length; i < l; i++) {
                 var sessions = data.rows[i][2];
                 var deviceString = data.rows[i][0].split('x');
                 var width = deviceString[0];
                 var height = deviceString[1];
-                transformedData.push([width, height, sessions]);
+                var category = data.rows[i][1];
+                transformedData.push([width, height]);
+                stats.push([category, sessions]);
             }
 
-            console.log(transformedData);
-
+            //            console.log(transformedData);
+            //
             //            var xAxis = headers.pop();
             var template = {
                 bindto: '#chart',
                 data: {
-                    columns: transformedData,
+                    rows: transformedData,
                     //                    x:function(){
                     //                        console.log(arguments);
                     //                        return 'ga:sessions'
                     //                    },
-                    //                    x: 'ga:sessions',
+                    //                    xs: {
+                    //                        width: 'height',
+                    //                        //                        sessions: 'sessions_x',
+                    //                        //                        versicolor: 'height',
+                    //                    },
+                    x: 'width',
+                    y: 'height',
                     //                    xFormat: '%Y%m%d',
-                    keys: {
-                        value: transformedDataHeaders
-                    },
+                    //                    keys: {
+                    //                        value: transformedDataHeaders
+                    //                    },
                     type: 'scatter',
-                    //                    color: function(color, d) {
-                    //                                                console.log(d.id, d);
-                    //                        //                        console.log(String(d.id).indexOf("iOS") !== -1);
-                    //                        if(String(d).indexOf("iOS") !== -1) {
-                    //                            if(String(d).indexOf("iOS 8") !== -1 || String(d).indexOf("iOS 9") !== -1) {
-                    //                                return "#00BCD4";
-                    //                            } else {
-                    //                                return "#9E9E9E";
-                    //                            }
-                    //                        } else if(String(d).indexOf("Windows") !== -1) {
-                    //                            if(String(d).indexOf("XP") !== -1 || String(d).indexOf("Vista") !== -1 || String(d).indexOf("Phone") !== -1) {
-                    //                                //                                return "#00BCD4";
-                    //                                return "#9E9E9E";
-                    //                            } else {
-                    //                                return "#8BC34A";
-                    //                            }
-                    //                        } else if(String(d).indexOf("Macintosh") !== -1) {
-                    //                            return "#FFC107";
-                    //                        } else {
-                    //                            return '#BDBDBD';//d.id && d.id === 'data3' ? d3.rgb(color).darker(d.value / 150) : color;
-                    //                        }
-                    //                    }//,
                     //                    order: null
+                    color: function(color, d) {
+                        var cat = stats[d.index][0];
+                        if(cat == 'tablet') {
+                            return '#ff0000';
+                        } else if(cat == 'mobile') {
+                            return '#00ff00';
+                        } else if(cat == 'desktop') {
+                            return '#0000ff';
+                        } else {
+                            return '#CCCCCC';
+                        }
+                        //                                                console.log(d.id, d);
+                        //                        //                        console.log(String(d.id).indexOf("iOS") !== -1);
+                        //                        if(String(d).indexOf("iOS") !== -1) {
+                        //                            if(String(d).indexOf("iOS 8") !== -1 || String(d).indexOf("iOS 9") !== -1) {
+                        //                                return "#00BCD4";
+                        //                            } else {
+                        //                                return "#9E9E9E";
+                        //                            }
+                        //                        } else if(String(d).indexOf("Windows") !== -1) {
+                        //                            if(String(d).indexOf("XP") !== -1 || String(d).indexOf("Vista") !== -1 || String(d).indexOf("Phone") !== -1) {
+                        //                                //                                return "#00BCD4";
+                        //                                return "#9E9E9E";
+                        //                            } else {
+                        //                                return "#8BC34A";
+                        //                            }
+                        //                        } else if(String(d).indexOf("Macintosh") !== -1) {
+                        //                            return "#FFC107";
+                        //                        } else {
+                        //                            return '#BDBDBD';//d.id && d.id === 'data3' ? d3.rgb(color).darker(d.value / 150) : color;
+                        //                        }
+                    },//,
                 },
                 legend: {
-                    position: 'right'
+                    show: false
+                },
+                //                point: {
+                //                    r: function(d) {
+                //                        console.log(d);
+                //                        return d.sessions;// * 5;
+                //                    }
+                //                },
+                axis: {
+                    x: {
+                        label: 'Width',
+                        //                        tick: {
+                        //                            count: 5
+                        //                        }
+                    },
+                    y: {
+                        label: 'Height'
+                    }
                 },
                 point: {
                     r: function(d) {
-                        return d.value * 5;
+                        console.log(d);
+                        return stats[d.index][1] / 10;
                     }
                 },
             };
