@@ -1,10 +1,40 @@
 <div class="mdl-grid demo-content">
-    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-grid">
         <div class="mdl-card__title">
-            <h2 class="mdl-card__title-text"><i class="material-icons" role="presentation">laptop_mac</i>Screen Sizes
+            <h2 class="mdl-card__title-text"><i class="material-icons" role="presentation">computer</i>Screen Sizes
             </h2>
         </div>
-        <div id='chart' class="chart">
+        <div id='chart-desktop' class="chart">
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+        </div>
+        <div class="mdl-card__menu">
+            <button id="demo-menu-lower-right"
+                    class="mdl-button mdl-js-button mdl-button--icon chart-csv">
+                <i class="material-icons">file_download</i>
+            </button>
+        </div>
+    </div>
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-grid">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text"><i class="material-icons" role="presentation">tablet</i>Screen Sizes
+            </h2>
+        </div>
+        <div id='chart-tablet' class="chart">
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+        </div>
+        <div class="mdl-card__menu">
+            <button id="demo-menu-lower-right"
+                    class="mdl-button mdl-js-button mdl-button--icon chart-csv">
+                <i class="material-icons">file_download</i>
+            </button>
+        </div>
+    </div>
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-grid">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text"><i class="material-icons" role="presentation">smartphone</i>Screen Sizes
+            </h2>
+        </div>
+        <div id='chart-mobile' class="chart">
             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
         </div>
         <div class="mdl-card__menu">
@@ -28,108 +58,75 @@
 
             d3.select('#chart').classed('loading', false);
 
-            //            var headers = data.columnHeaders.map(function(val) {
-            //                return val.name;
-            //            });
-            //            data.rows.unshift(headers.slice());
-
-            var transformedDataHeaders = ['width', 'height'];
-            var transformedData = [transformedDataHeaders];
-            var stats = [['category', 'sessions']];
-            //            console.log(data.rows[0]);
+            var transformedDataHeaders = ['width x height', 'sessions'];
+            var desktopData = [transformedDataHeaders];
+            var tabletData = [transformedDataHeaders];
+            var phoneData = [transformedDataHeaders];
+            //            var stats = [['category', 'sessions']];
             for(var i = 0, l = data.rows.length; i < l; i++) {
                 var sessions = data.rows[i][2];
-                var deviceString = data.rows[i][0].split('x');
+                var deviceString = data.rows[i][0];//.split('x');
                 var width = deviceString[0];
                 var height = deviceString[1];
                 var category = data.rows[i][1];
-                transformedData.push([width, height]);
-                stats.push([category, sessions]);
+                if(category == 'mobile') {
+                    phoneData.push([deviceString, sessions]);
+                } else if(category == 'tablet') {
+                    tabletData.push([deviceString, sessions]);
+                } else {
+                    desktopData.push([deviceString, sessions]);
+                }
+                //                stats.push([category, sessions]);
             }
 
-            //            console.log(transformedData);
-            //
-            //            var xAxis = headers.pop();
             var template = {
-                bindto: '#chart',
+                bindto: '#chart-desktop',
                 data: {
-                    rows: transformedData,
-                    //                    x:function(){
-                    //                        console.log(arguments);
-                    //                        return 'ga:sessions'
-                    //                    },
-                    //                    xs: {
-                    //                        width: 'height',
-                    //                        //                        sessions: 'sessions_x',
-                    //                        //                        versicolor: 'height',
-                    //                    },
-                    x: 'width',
-                    y: 'height',
-                    //                    xFormat: '%Y%m%d',
-                    //                    keys: {
-                    //                        value: transformedDataHeaders
-                    //                    },
-                    type: 'scatter',
-                    //                    order: null
-                    color: function(color, d) {
-                        var cat = stats[d.index][0];
-                        if(cat == 'tablet') {
-                            return '#ff0000';
-                        } else if(cat == 'mobile') {
-                            return '#00ff00';
-                        } else if(cat == 'desktop') {
-                            return '#0000ff';
-                        } else {
-                            return '#CCCCCC';
-                        }
-                        //                                                console.log(d.id, d);
-                        //                        //                        console.log(String(d.id).indexOf("iOS") !== -1);
-                        //                        if(String(d).indexOf("iOS") !== -1) {
-                        //                            if(String(d).indexOf("iOS 8") !== -1 || String(d).indexOf("iOS 9") !== -1) {
-                        //                                return "#00BCD4";
-                        //                            } else {
-                        //                                return "#9E9E9E";
-                        //                            }
-                        //                        } else if(String(d).indexOf("Windows") !== -1) {
-                        //                            if(String(d).indexOf("XP") !== -1 || String(d).indexOf("Vista") !== -1 || String(d).indexOf("Phone") !== -1) {
-                        //                                //                                return "#00BCD4";
-                        //                                return "#9E9E9E";
-                        //                            } else {
-                        //                                return "#8BC34A";
-                        //                            }
-                        //                        } else if(String(d).indexOf("Macintosh") !== -1) {
-                        //                            return "#FFC107";
-                        //                        } else {
-                        //                            return '#BDBDBD';//d.id && d.id === 'data3' ? d3.rgb(color).darker(d.value / 150) : color;
-                        //                        }
-                    },//,
+                    columns: desktopData,
+                    type: 'donut',
+                    order: null,
                 },
                 legend: {
+                    position: 'right',
                     show: false
                 },
-                //                point: {
-                //                    r: function(d) {
-                //                        console.log(d);
-                //                        return d.sessions;// * 5;
-                //                    }
-                //                },
-                axis: {
-                    x: {
-                        label: 'Width',
-                        //                        tick: {
-                        //                            count: 5
-                        //                        }
-                    },
-                    y: {
-                        label: 'Height'
-                    }
+                donut: {
+                    title: 'Desktop'
+                }
+            };
+
+            var chart = c3.generate(template);
+            var template = {
+                bindto: '#chart-tablet',
+                data: {
+                    columns: tabletData,
+                    type: 'donut',
+                    order: null,
                 },
-                point: {
-                    r: function(d) {
-                        console.log(d);
-                        return stats[d.index][1] / 10;
-                    }
+                legend: {
+                    position: 'right',
+                    show: false
                 },
+                donut: {
+                    title: 'Tablet'
+                }
+            };
+
+            var chart = c3.generate(template);
+            var template = {
+                bindto: '#chart-mobile',
+                data: {
+                    columns: phoneData,
+                    type: 'donut',
+                    order: null,
+                },
+                legend: {
+                    position: 'right',
+                    show: false
+                },
+                donut: {
+                    title: 'Mobile'
+                }
             };
 
             var chart = c3.generate(template);
