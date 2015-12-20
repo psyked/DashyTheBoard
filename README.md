@@ -1,4 +1,10 @@
-# Dashboard
+# Dashy 'the board'
+An example project combining NodeJS, Connect, Material UI, Google Analytics data API and C3.js.
+Displays data taken directly from Google Analytics and renders it as Charts.
+
+# Getting Started
+Use `npm start` to run the application, and then access it on `http://localhost:3000`.
+Requires a Google Analytics access key file, with the filename `cert.nocrypt.pem` in the root of the project.
 
 # Todo
 - Design appropriateness
