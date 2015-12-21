@@ -6,6 +6,14 @@ Displays data taken directly from Google Analytics and renders it as Charts.
 Use `npm start` to run the application, and then access it on `http://localhost:3000`.
 Requires a Google Analytics access key file, with the filename `cert.nocrypt.pem` in the root of the project.
 
+# Screenshots
+
+![Screenshot 1: Traffic](./docs/img/traffic-screenshot.png)
+
+![Screenshot 2: Browser](./docs/img/browser-screenshot.png)
+
+![Screenshot 3: Design](./docs/img/design-screenshot.png)
+
 # Todo
 - Design appropriateness
 - Screen size scatter chart
