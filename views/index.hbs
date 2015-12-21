@@ -41,6 +41,10 @@
                 if(error) {
                     return console.warn(error);
                 }
+
+                d3.select('#start-time').attr('value', moment(startDate).format("YYYY-MM-DD"));
+                d3.select('#end-time').attr('value', moment(endDate).format("YYYY-MM-DD"));
+
                 chartData = data.rows;
                 var headers = data.columnHeaders.map(function(val) {
                     return val.name;
@@ -86,6 +90,10 @@
                         if(error) {
                             return console.warn(error);
                         }
+
+                        d3.select('#start-time').attr('value', moment(startDate).format("YYYY-MM-DD"));
+                        d3.select('#end-time').attr('value', moment(endDate).format("YYYY-MM-DD"));
+
                         chart.load({
                             rows: chartData.concat(data.rows)
                         })
@@ -102,6 +110,9 @@
             }
 
             d3.select('#chart').classed('loading', false);
+
+            d3.select('#start-time').attr('value', moment(startDate).format("YYYY-MM-DD"));
+            d3.select('#end-time').attr('value', moment(endDate).format("YYYY-MM-DD"));
 
             chartData = data.rows;
             var headers = data.columnHeaders.map(function(val) {
